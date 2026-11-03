@@ -1,5 +1,7 @@
 "use client";
 
+import { profile, stats as profileStats } from "@/data/portfolio";
+
 const facts = [
   { key: "role", value: "Software Engineer · Revenue Monster" },
   { key: "focus", value: "Full-stack web & AI-driven platforms" },
@@ -7,12 +9,7 @@ const facts = [
   { key: "education", value: "BCS (Hons.) Netcentric Computing, UiTM" },
 ];
 
-const stats = [
-  { value: "4", label: "roles" },
-  { value: "6+", label: "live projects" },
-  { value: "18", label: "technologies" },
-  { value: "2×", label: "dean's list" },
-];
+const stats = profileStats.map((s) => ({ value: `${s.value}${s.suffix}`, label: s.label.toLowerCase() }));
 
 const recent = [
   { name: "fagrox-app", note: "AI agriculture platform", href: "https://apps.fagrox.com" },
@@ -21,9 +18,9 @@ const recent = [
 ];
 
 const contact = [
-  { key: "email", value: "aimandanish955@gmail.com", href: "mailto:aimandanish955@gmail.com" },
-  { key: "linkedin", value: "aimandanish02", href: "https://www.linkedin.com/in/aimandanish02" },
-  { key: "phone", value: "+60 16-221 9666", href: "tel:+60162219666" },
+  { key: "email", value: profile.email, href: `mailto:${profile.email}` },
+  { key: "linkedin", value: profile.linkedinHandle, href: profile.linkedin },
+  { key: "github", value: profile.githubHandle, href: profile.github },
 ];
 
 const Prompt = ({ command }: { command: string }) => (

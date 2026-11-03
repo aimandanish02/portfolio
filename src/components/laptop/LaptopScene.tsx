@@ -4,6 +4,7 @@ import { Suspense, useRef, type MutableRefObject, type RefObject } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { useGLTF } from "@react-three/drei";
 import * as THREE from "three";
+import { OVERLAY_SIZE } from "./overlay";
 
 const MODEL_URL = "/models/laptop.glb";
 
@@ -21,9 +22,6 @@ const SCREEN = {
 // The lid faces -Z in model space, so the rig spins to meet the camera.
 const MODEL_YAW = Math.PI;
 
-// The overlay is authored at a fixed 16:9 size and scaled to the projected lid,
-// so the terminal layout never reflows as the laptop grows.
-export const OVERLAY_SIZE = { width: 960, height: 536 };
 
 // END.rotX cancels the lid tilt exactly, leaving the screen square to the camera.
 const START = { scale: 2.9, rotX: 0.24, rotY: -0.6, posY: -0.06 };

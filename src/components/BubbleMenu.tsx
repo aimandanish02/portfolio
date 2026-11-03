@@ -1,3 +1,5 @@
+"use client";
+
 import type { CSSProperties, ReactNode } from 'react';
 import { useEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
@@ -15,6 +17,8 @@ type MenuItem = {
 
 export type BubbleMenuProps = {
   logo: ReactNode | string;
+  logoHref?: string;
+  logoAriaLabel?: string;
   onMenuClick?: (open: boolean) => void;
   className?: string;
   style?: CSSProperties;
@@ -68,10 +72,12 @@ const DEFAULT_ITEMS: MenuItem[] = [
 
 export default function BubbleMenu({
   logo,
+  logoHref = '#',
+  logoAriaLabel = 'Back to top',
   onMenuClick,
   className,
   style,
-  menuAriaLabel = 'Toggle menu',
+  menuAriaLabel = 'Open menu',
   menuBg = '#fff',
   menuContentColor = '#111',
   useFixedPosition = false,
@@ -92,9 +98,9 @@ export default function BubbleMenu({
   const containerClassName = [
     'bubble-menu',
     useFixedPosition ? 'fixed' : 'absolute',
-    'left-0 right-0 top-8',
+    'left-0 right-0 top-4 sm:top-6',
     'flex items-center justify-between',
-    'gap-4 px-8',
+    'gap-4 px-4 sm:px-6',
     'pointer-events-none',
     'z-[1001]',
     className
@@ -102,12 +108,31 @@ export default function BubbleMenu({
     .filter(Boolean)
     .join(' ');
 
-  const handleToggle = () => {
-    const nextState = !isMenuOpen;
+  const setMenu = (nextState: boolean) => {
     if (nextState) setShowOverlay(true);
     setIsMenuOpen(nextState);
     onMenuClick?.(nextState);
   };
+
+  const handleToggle = () => setMenu(!isMenuOpen);
+
+  // Close on Escape and lock page scroll while the full-screen menu is open.
+  useEffect(() => {
+    if (!isMenuOpen) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setIsMenuOpen(false);
+        onMenuClick?.(false);
+      }
+    };
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    window.addEventListener('keydown', onKey);
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener('keydown', onKey);
+    };
+  }, [isMenuOpen, onMenuClick]);
 
   useEffect(() => {
     const overlay = overlayRef.current;
@@ -237,7 +262,10 @@ export default function BubbleMenu({
       `}</style>
 
       <nav className={containerClassName} style={style} aria-label="Main navigation">
-        <div
+        <a
+          href={logoHref}
+          aria-label={logoAriaLabel}
+          onClick={() => isMenuOpen && setMenu(false)}
           className={[
             'bubble logo-bubble',
             'inline-flex items-center justify-center',
@@ -247,11 +275,11 @@ export default function BubbleMenu({
             'shadow-[0_4px_16px_rgba(0,0,0,0.35)]',
             'pointer-events-auto',
             'h-12 md:h-14',
-            'px-4 md:px-8',
+            'px-6 md:px-7',
             'gap-2',
+            'transition-transform duration-300 hover:scale-105',
             'will-change-transform'
           ].join(' ')}
-          aria-label="Logo"
           style={{
             background: menuBg,
             minHeight: '48px',
@@ -259,7 +287,7 @@ export default function BubbleMenu({
           }}
         >
           <span
-            className={['logo-content', 'inline-flex items-center justify-center', 'w-[120px] h-full'].join(' ')}
+            className={['logo-content', 'inline-flex items-center justify-center', 'h-full'].join(' ')}
             style={
               {
                 ['--logo-max-height']: '60%',
@@ -268,12 +296,13 @@ export default function BubbleMenu({
             }
           >
             {typeof logo === 'string' ? (
+              // eslint-disable-next-line @next/next/no-img-element -- tiny logo, optional string variant
               <img src={logo} alt="Logo" className="bubble-logo max-h-[60%] max-w-full object-contain block" />
             ) : (
               logo
             )}
           </span>
-        </div>
+        </a>
 
         <button
           type="button"
@@ -291,8 +320,9 @@ export default function BubbleMenu({
             'will-change-transform'
           ].join(' ')}
           onClick={handleToggle}
-          aria-label={menuAriaLabel}
-          aria-pressed={isMenuOpen}
+          aria-label={isMenuOpen ? 'Close menu' : menuAriaLabel}
+          aria-expanded={isMenuOpen}
+          aria-controls="site-menu"
           style={{ background: menuBg }}
         >
           <span
@@ -320,6 +350,7 @@ export default function BubbleMenu({
       {showOverlay && (
         <div
           ref={overlayRef}
+          id="site-menu"
           className={[
             'bubble-menu-items',
             useFixedPosition ? 'fixed' : 'absolute',
@@ -341,13 +372,11 @@ export default function BubbleMenu({
               'gap-x-0 gap-y-1',
               'pointer-events-auto'
             ].join(' ')}
-            role="menu"
             aria-label="Menu links"
           >
             {menuItems.map((item, idx) => (
               <li
                 key={idx}
-                role="none"
                 className={[
                   'pill-col',
                   'flex justify-center items-stretch',
@@ -356,8 +385,8 @@ export default function BubbleMenu({
                 ].join(' ')}
               >
                 <a
-                  role="menuitem"
                   href={item.href}
+                  onClick={() => setMenu(false)}
                   aria-label={item.ariaLabel || item.label}
                   className={[
                     'pill-link',

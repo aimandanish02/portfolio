@@ -1,11 +1,15 @@
-import React, { useEffect, useMemo, useRef, type ReactNode, type RefObject } from 'react';
+"use client";
+
+import React, { useEffect, useMemo, useRef, type RefObject } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 gsap.registerPlugin(ScrollTrigger);
 
 interface ScrollFloatProps {
-  children: ReactNode;
+  children: string;
+  as?: 'h1' | 'h2' | 'h3' | 'p' | 'span';
+  id?: string;
   scrollContainerRef?: RefObject<HTMLElement>;
   containerClassName?: string;
   textClassName?: string;
@@ -18,6 +22,8 @@ interface ScrollFloatProps {
 
 const ScrollFloat: React.FC<ScrollFloatProps> = ({
   children,
+  as = 'h2',
+  id,
   scrollContainerRef,
   containerClassName = '',
   textClassName = '',
@@ -27,26 +33,36 @@ const ScrollFloat: React.FC<ScrollFloatProps> = ({
   scrollEnd = 'bottom bottom-=40%',
   stagger = 0.03
 }) => {
-  const containerRef = useRef<HTMLHeadingElement>(null);
+  const containerRef = useRef<HTMLElement>(null);
 
-  const splitText = useMemo(() => {
-    const text = typeof children === 'string' ? children : '';
-    return text.split('').map((char, index) => (
-      <span className="inline-block word" key={index}>
-        {char === ' ' ? '\u00A0' : char}
-      </span>
-    ));
-  }, [children]);
+  // Characters animate individually but are grouped per word so lines only wrap between words.
+  // The spans are presentational; the full string is exposed once via aria-label.
+  const splitText = useMemo(
+    () =>
+      children.split(' ').map((word, wi, words) => (
+        <React.Fragment key={wi}>
+          <span className="inline-block whitespace-nowrap" aria-hidden="true">
+            {word.split('').map((char, ci) => (
+              <span className="inline-block" data-char key={ci}>
+                {char}
+              </span>
+            ))}
+          </span>
+          {wi < words.length - 1 ? ' ' : null}
+        </React.Fragment>
+      )),
+    [children]
+  );
 
   useEffect(() => {
     const el = containerRef.current;
     if (!el) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
-    const scroller = scrollContainerRef && scrollContainerRef.current ? scrollContainerRef.current : window;
+    const scroller = scrollContainerRef?.current ?? window;
+    const charElements = el.querySelectorAll('[data-char]');
 
-    const charElements = el.querySelectorAll('.inline-block');
-
-    gsap.fromTo(
+    const tween = gsap.fromTo(
       charElements,
       {
         willChange: 'opacity, transform',
@@ -58,12 +74,12 @@ const ScrollFloat: React.FC<ScrollFloatProps> = ({
       },
       {
         duration: animationDuration,
-        ease: ease,
+        ease,
         opacity: 1,
         yPercent: 0,
         scaleY: 1,
         scaleX: 1,
-        stagger: stagger,
+        stagger,
         scrollTrigger: {
           trigger: el,
           scroller,
@@ -73,12 +89,19 @@ const ScrollFloat: React.FC<ScrollFloatProps> = ({
         }
       }
     );
+
+    return () => {
+      tween.scrollTrigger?.kill();
+      tween.kill();
+    };
   }, [scrollContainerRef, animationDuration, ease, scrollStart, scrollEnd, stagger]);
 
+  // One concrete tag type keeps the ref typing simple; all options are plain HTMLElements.
+  const Tag = as as 'h2';
   return (
-    <h2 ref={containerRef} className={`my-5 overflow-hidden ${containerClassName}`}>
-      <span className={`inline-block text-[clamp(1.6rem,4vw,3rem)] leading-[1.5] ${textClassName}`}>{splitText}</span>
-    </h2>
+    <Tag ref={containerRef as RefObject<HTMLHeadingElement>} id={id} aria-label={children} className={`overflow-hidden ${containerClassName}`}>
+      <span className={`block ${textClassName}`}>{splitText}</span>
+    </Tag>
   );
 };
 

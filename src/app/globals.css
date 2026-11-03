@@ -7,9 +7,9 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-sans);
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-geist-mono);
-  --font-heading: var(--font-sans);
+  --font-heading: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -121,13 +121,82 @@
   * {
     @apply border-border outline-ring/50;
   }
-  body {
-    @apply bg-background text-foreground;
-  }
   html {
     @apply font-sans;
+    color-scheme: dark;
+    /* Clears the floating nav pill (top-8 + h-14) when jumping to an anchor. */
     scroll-padding-top: 6rem;
+    -webkit-tap-highlight-color: transparent;
+    text-rendering: optimizeLegibility;
   }
+  body {
+    @apply bg-black text-white;
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-sky-400);
+    outline-offset: 3px;
+    border-radius: 0.375rem;
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* Layout primitives — one spacing scale for every section.            */
+/* ------------------------------------------------------------------ */
+
+/* Horizontal page gutter + max content width, shared by every section. */
+@utility container-page {
+  margin-inline: auto;
+  width: 100%;
+  max-width: 72rem; /* 1152px */
+  padding-inline: 1.25rem; /* 20px */
+  @media (width >= 40rem) {
+    padding-inline: 2rem; /* 32px */
+  }
+}
+
+/* Vertical rhythm for a full section: 96px mobile, 128px desktop. */
+@utility section-y {
+  padding-block: 6rem;
+  @media (width >= 64rem) {
+    padding-block: 8rem;
+  }
+}
+
+/* Small uppercase label above every section heading. */
+@utility eyebrow {
+  font-size: 0.75rem;
+  line-height: 1rem;
+  font-weight: 600;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+}
+
+/* Section heading — same size at every section. */
+@utility heading-section {
+  font-size: 1.875rem; /* 30px */
+  line-height: 1.15;
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  @media (width >= 40rem) {
+    font-size: 2.5rem; /* 40px */
+  }
+}
+
+/* Uppercase micro label (stat captions, card meta, dt). */
+@utility label-meta {
+  font-size: 0.75rem;
+  line-height: 1rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgb(255 255 255 / 0.55);
+}
+
+/* Shared glass surface for every card on the page. */
+@utility surface {
+  border: 1px solid rgb(255 255 255 / 0.1);
+  background-color: rgb(255 255 255 / 0.03);
+  border-radius: 1rem;
 }
 
 ::selection {
@@ -141,4 +210,18 @@
 }
 .no-scrollbar::-webkit-scrollbar {
   display: none;
+}
+
+/* Respect the OS setting: kill smooth scroll and long transitions. */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto !important;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }

@@ -5,6 +5,7 @@ import dynamic from "next/dynamic";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import ScreenContent from "./ScreenContent";
+import { OVERLAY_SIZE } from "./overlay";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -12,7 +13,6 @@ gsap.registerPlugin(ScrollTrigger);
 // only mounted once the section is within a viewport of the user.
 const LaptopScene = dynamic(() => import("./LaptopScene"), { ssr: false });
 
-const OVERLAY_SIZE = { width: 960, height: 536 };
 
 export default function LaptopSection() {
   const sectionRef = useRef<HTMLElement>(null);
@@ -67,8 +67,8 @@ export default function LaptopSection() {
 
   if (prefersReducedMotion) {
     return (
-      <section id="workstation" className="relative bg-black px-6 py-20">
-        <div className="mx-auto max-w-3xl">
+      <section id="workstation" aria-label="Workstation" className="section-y relative bg-black">
+        <div className="container-page max-w-3xl">
           <div className="aspect-[16/10] w-full overflow-hidden rounded-2xl border border-white/10">
             <ScreenContent />
           </div>
@@ -78,7 +78,7 @@ export default function LaptopSection() {
   }
 
   return (
-    <section ref={sectionRef} id="workstation" className="relative h-[280vh] bg-black">
+    <section ref={sectionRef} id="workstation" aria-label="Workstation" className="relative h-[280vh] bg-black">
       <div className="sticky top-0 h-screen w-full overflow-hidden">
         <div className="pointer-events-none absolute left-1/2 top-1/2 h-[42rem] w-[42rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-sky-500/10 blur-[140px]" />
         <div className="pointer-events-none absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-black to-transparent" />
@@ -96,7 +96,7 @@ export default function LaptopSection() {
           <ScreenContent />
         </div>
 
-        <p ref={hintRef} className="pointer-events-none absolute inset-x-0 bottom-8 text-center text-xs uppercase tracking-[0.3em] text-white/30">
+        <p ref={hintRef} className="pointer-events-none absolute inset-x-0 bottom-10 text-center text-xs uppercase tracking-[0.3em] text-white/50">
           Scroll to boot up
         </p>
       </div>
