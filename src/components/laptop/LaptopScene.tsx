@@ -27,6 +27,12 @@ const MODEL_YAW = Math.PI;
 const START = { scale: 2.9, rotX: 0.24, rotY: -0.6, posY: -0.06 };
 const END = { scale: 11.2, rotX: -SCREEN.tiltX, rotY: 0, posY: 0 };
 
+// Visible world height at the model's depth (camera z=3.2, fov 32°).
+const VIEW_HEIGHT = 2 * 3.2 * Math.tan(THREE.MathUtils.degToRad(16));
+
+/** Cap the final zoom so the screen never exceeds 92% of the viewport width (portrait phones). */
+const endScaleFor = (aspect: number) => Math.min(END.scale, (0.92 * VIEW_HEIGHT * aspect) / SCREEN.width);
+
 const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
 const easeInOut = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
 
@@ -48,7 +54,8 @@ function Laptop({ progressRef, overlayRef }: LaptopProps) {
     smoothed.current = THREE.MathUtils.damp(smoothed.current, progressRef.current, 6, delta);
     const p = easeInOut(THREE.MathUtils.clamp(smoothed.current, 0, 1));
 
-    rig.current.scale.setScalar(lerp(START.scale, END.scale, p));
+    const endScale = endScaleFor(state.size.width / state.size.height);
+    rig.current.scale.setScalar(lerp(Math.min(START.scale, endScale * 0.6), endScale, p));
     rig.current.position.y = lerp(START.posY, END.posY, p);
     rig.current.rotation.x = lerp(START.rotX, END.rotX, p);
 

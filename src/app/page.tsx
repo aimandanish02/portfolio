@@ -1,4 +1,4 @@
-import { ArrowRight, ArrowUp, ArrowUpRight, Mail, MapPin, Phone } from "lucide-react";
+import { ArrowRight, ArrowUp, Mail, MapPin, Phone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Galaxy from "@/components/Galaxy";
 import Shuffle from "@/components/Shuffle";
@@ -63,8 +63,6 @@ const socials = [
 ];
 
 const isExternal = (href: string) => href.startsWith("http");
-const hostOf = (href: string) => new URL(href).host;
-const liveCount = projects.filter((p) => p.href).length;
 
 /** Gradient-outline CTA shared by hero and contact. */
 const outlineCta =
@@ -396,31 +394,20 @@ export default function Home() {
               eyebrow="Projects"
               title="Things I've built"
               accent="text-amber-400"
-              aside={`${projects.length} projects · ${liveCount} live`}
+              aside={`${projects.length} projects · 2022 — present`}
             />
 
             <ul className="mt-12 grid gap-4 sm:mt-16 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3">
               {projects.map((p, i) => {
                 const body = (
                   <>
-                    <div className="flex items-start justify-between gap-4">
-                      <div>
-                        <h3
-                          className={`font-semibold text-white transition-colors duration-300 group-hover:text-amber-300 ${
-                            p.featured ? "text-xl sm:text-2xl" : "text-base"
-                          }`}
-                        >
-                          {p.title}
-                        </h3>
-                        {p.href ? <p className="mt-1 font-mono text-xs text-white/50">{hostOf(p.href)}</p> : null}
-                      </div>
-                      {p.href ? (
-                        <ArrowUpRight
-                          aria-hidden
-                          className="size-5 shrink-0 text-white/45 transition duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-amber-400"
-                        />
-                      ) : null}
-                    </div>
+                    <h3
+                      className={`font-semibold text-white transition-colors duration-300 group-hover:text-amber-300 ${
+                        p.featured ? "text-xl sm:text-2xl" : "text-base"
+                      }`}
+                    >
+                      {p.title}
+                    </h3>
                     <p className={`mt-3 leading-relaxed text-white/65 ${p.featured ? "max-w-xl text-[0.9375rem]" : "text-sm"}`}>
                       {p.description}
                     </p>
@@ -450,19 +437,7 @@ export default function Home() {
                       }`}
                       spotlightColor="rgba(250, 204, 21, 0.18)"
                     >
-                      {p.href ? (
-                        <a
-                          href={p.href}
-                          target="_blank"
-                          rel="noreferrer noopener"
-                          className="flex h-full flex-col rounded-2xl p-6 focus-visible:outline-offset-[-2px]"
-                        >
-                          {body}
-                          <span className="sr-only"> (opens in a new tab)</span>
-                        </a>
-                      ) : (
-                        <div className="flex h-full flex-col p-6">{body}</div>
-                      )}
+                      <div className="flex h-full flex-col p-6">{body}</div>
                     </SpotlightCard>
                   </AnimatedContent>
                 );

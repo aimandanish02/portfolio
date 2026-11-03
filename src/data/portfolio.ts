@@ -142,7 +142,6 @@ export const experience: Job[] = [
 export type Project = {
   title: string;
   description: string;
-  href?: string;
   stack: string[];
   status?: string;
   featured?: boolean;
@@ -153,23 +152,22 @@ export const projects: Project[] = [
     title: "FagroX App",
     description:
       "AI-driven agriculture platform integrating weather forecasts, crop analytics, and market access tools — helping farmers plan, grow, and sell from one dashboard.",
-    href: "https://apps.fagrox.com",
     stack: ["Next.js", "AI", "REST"],
     status: "Ongoing",
     featured: true,
   },
-  { title: "iPen HR System", description: "Full-stack HR management system covering employee records, leave, and payroll workflows.", href: "https://hrs.ipentech.com", stack: ["Laravel", "React.js", "MySQL"] },
-  { title: "FagroX CMS", description: "Strapi-based CMS backend powering content for fagrox.com.", href: "https://bos.fagrox.com", stack: ["Strapi", "Node.js"] },
-  { title: "FagroX", description: "Official landing site highlighting digital agriculture solutions and farmer onboarding.", href: "https://fagrox.com", stack: ["Next.js", "Tailwind CSS"] },
-  { title: "Phytob", description: "Responsive corporate website for a health and wellness brand.", href: "https://phytob.com.my", stack: ["WordPress", "PHP"] },
-  { title: "Hekha", description: "Clothing brand storefront with a modern UI/UX pass end to end.", href: "https://hekha.co", stack: ["Next.js", "Tailwind CSS"] },
+  { title: "iPen HR System", description: "Full-stack HR management system covering employee records, leave, and payroll workflows.", stack: ["Laravel", "React.js", "MySQL"] },
+  { title: "FagroX CMS", description: "Strapi-based CMS backend powering content for fagrox.com.", stack: ["Strapi", "Node.js"] },
+  { title: "FagroX", description: "Official landing site highlighting digital agriculture solutions and farmer onboarding.", stack: ["Next.js", "Tailwind CSS"] },
+  { title: "Phytob", description: "Responsive corporate website for a health and wellness brand.", stack: ["WordPress", "PHP"] },
+  { title: "Hekha", description: "Clothing brand storefront with a modern UI/UX pass end to end.", stack: ["Next.js", "Tailwind CSS"] },
   { title: "E-Certificate Management System", description: "Blockchain-based certificate storage using Laravel and IPFS for tamper-proof verification.", stack: ["Laravel", "IPFS", "Blockchain"] },
   { title: "Hardware Inventory System", description: "Inventory tracking system for hardware assets with reporting and stock movement history.", stack: ["Laravel", "MySQL"] },
 ];
 
 export const stats = [
   { value: 4, suffix: "", label: "Roles held" },
-  { value: projects.filter((p) => p.href).length, suffix: "+", label: "Live projects" },
+  { value: projects.length, suffix: "", label: "Projects built" },
   { value: techStack.length, suffix: "", label: "Technologies" },
   { value: 2, suffix: "×", label: "Dean's List" },
 ];

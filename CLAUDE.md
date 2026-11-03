@@ -36,7 +36,8 @@ All sourced/adapted from ReactBits (reactbits.dev), hand-integrated (not all wer
 - `BubbleMenu.tsx` — floating pill/bubble nav menu, animated with `gsap`.
 - `Shuffle.tsx` — text shuffle/reveal animation using `gsap` + `ScrollTrigger` + `SplitText` + `@gsap/react`'s `useGSAP` hook.
 - `AnimatedContent`, `ScrollReveal`, `ScrollFloat`, `ScrollVelocity`, `SpotlightCard`, `GlareHover`, `CountUp` — scroll/hover effects. `AnimatedContent` takes `as="li"`, `ScrollFloat`/`ScrollReveal` take `as` so list/heading markup stays valid.
-- `laptop/` — R3F scroll-driven 3D laptop (`#workstation`); three.js is code-split and only mounted near the viewport.
+- `laptop/` — R3F scroll-driven 3D laptop (`#workstation`); three.js is code-split and only mounted near the viewport. The zoom finishes at 70% of the section's scroll (`ANIMATION_END`); the rest is a hold so visitors can use the terminal. The final zoom is capped to fit the viewport width on portrait phones.
+- `terminal/` — the **interactive terminal** shown on the laptop screen (`ScreenContent` → `TerminalView`). `filesystem.ts` builds a read-only virtual FS from `src/data/portfolio.ts` (README.md, about.md, contact.txt, skills.json, projects/, experience/, hidden .secret/.zshrc); `commands.tsx` holds the commands (help, ls [-la], cd, pwd, cat, tree, whoami, neofetch, open <section>, contact, history, echo, date, clear, exit + hidden easter eggs) and tab completion. `useTerminal` holds one session shared by the on-screen view and a fullscreen dialog (portal) — the dialog is the main way to use it on phones ("Open terminal" button). Suggestion chips under the prompt list starter commands.
 - `LogoLoop.tsx` — infinite marquee/logo loop; tech-stack logos passed into it (in `page.tsx`) are loaded live from the `simpleicons.org` CDN (brand-colored SVGs), not bundled npm assets.
 
 ## Other key dependencies
@@ -53,17 +54,17 @@ Single scrolling page, dark theme (`bg-black text-white` base), sections in orde
 
 1. **Nav** — `BubbleMenu` (floating pill nav, fixed/overlay), logo `AD.` with sky→purple gradient text, links to `#hero`. Menu closes on link click / Escape, locks scroll, uses `aria-expanded`. Nav overlay uses `backdrop-blur-2xl` + `rgba(5,6,15,0.82)` scrim to avoid overlapping hero content; pill background is dark navy (`#1a1c2e`), not pure black.
 2. `#hero` — `Galaxy` WebGL starfield background (`density=1.3 hueShift=200 glowIntensity=0.5 saturation=0.65 twinkleIntensity=0.5`), `Shuffle` text-reveal headline/subheadline, primary CTA button with sky→purple gradient (`from-sky-400 to-purple-500`). Bottom fade via gradient overlay into black. Stats row (`CountUp`) at the bottom. Followed by `#workstation` (3D laptop).
-3. `#about` — purple accent (label + ambient glow blob). Stats grid + capability cards, each card has a distinct icon color (sky/purple/emerald).
+3. `#about` — purple accent (label + ambient glow blob). Intro statement + facts list, and four capability cards with distinct icon colors (sky/purple/emerald/pink). The stats row lives in the hero.
 4. `#skills` — cyan accent glow blob. `LogoLoop` marquee of tech-stack logos, pulled live from `simpleicons.org` in brand colors (a couple manually overridden to white for contrast: Next.js, Express; AWS kept its orange).
 5. `#experience` — pink accent. Timeline with glowing pink dots.
-6. `#projects` — amber accent, right-side glow blob. First project is `featured` (spans 2 cols on lg so the 8-card grid fills 3 rows), cards show the live hostname.
+6. `#projects` — amber accent, right-side glow blob. First project is `featured` (spans 2 cols on lg so the 8-card grid fills 3 rows). Projects intentionally have **no external links** (most client sites are no longer viewable) — don't add them back.
 7. `#contact` — emerald accent. "Email me" CTA (emerald→cyan gradient) + "Copy email" button; contact cards for email/phone/LinkedIn/GitHub.
 
 Global: `SplashCursor` (WebGL fluid cursor, color `#38bdf8`) via `CursorEffect` in `layout.tsx` (fixed overlay, `pointer-events: none`). `ScrollProgress` top bar + right-side section rail (lg+). Footer with socials + back-to-top.
 
 ## Design history / decisions worth knowing
 
-- Cursor effect was originally `SwarmCursor` (WebGL swarm/worm effect) — replaced with `SplashCursor` (WebGL fluid sim) per user preference. `SwarmCursor.tsx` still exists in the repo but is dead code.
+- Cursor effect was originally `SwarmCursor` (WebGL swarm/worm effect) — replaced with `SplashCursor` (WebGL fluid sim) per user preference. `SwarmCursor.tsx` has since been deleted.
 - Nav (`BubbleMenu`) originally had a bug where its `inset-0` fixed overlay visually clashed with page content on open — fixed with the backdrop-blur + dark scrim treatment described above.
 - Tech stack pills started as plain text; upgraded to real brand-colored SVG logos via the Simple Icons CDN.
 - The "About" section originally had text only; a stats grid, capability cards, and ambient color blobs were added for visual richness.
