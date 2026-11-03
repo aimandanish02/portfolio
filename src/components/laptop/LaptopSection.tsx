@@ -23,6 +23,7 @@ export default function LaptopSection() {
   const sectionRef = useRef<HTMLElement>(null);
   const overlayRef = useRef<HTMLDivElement>(null);
   const hintRef = useRef<HTMLParagraphElement>(null);
+  const introRef = useRef<HTMLDivElement>(null);
   const useHintRef = useRef<HTMLDivElement>(null);
   const [fullscreen, setFullscreen] = useState(false);
   const onFullscreenChange = useCallback((open: boolean) => setFullscreen(open), []);
@@ -68,6 +69,11 @@ export default function LaptopSection() {
         if (hintRef.current) {
           hintRef.current.style.opacity = `${Math.max(0, 1 - p / 0.35)}`;
         }
+        if (introRef.current) {
+          const fade = Math.max(0, 1 - p / 0.3);
+          introRef.current.style.opacity = `${fade}`;
+          introRef.current.style.transform = `translateY(${(1 - fade) * -40}px)`;
+        }
         // Once the screen has settled, tell people they can type into it.
         if (useHintRef.current) {
           const visible = Math.min(1, Math.max(0, (p - 0.92) / 0.08));
@@ -82,8 +88,9 @@ export default function LaptopSection() {
 
   if (prefersReducedMotion) {
     return (
-      <section id="workstation" aria-label="Workstation" className="section-y relative bg-black">
+      <section id="workstation" aria-labelledby="workstation-title" className="section-y relative bg-black">
         <div className="container-page max-w-3xl">
+          <WorkstationIntro className="mb-10" />
           <div className="h-[34rem] w-full overflow-hidden rounded-2xl border border-white/10">
             <ScreenContent fullscreen={fullscreen} onFullscreenChange={onFullscreenChange} />
           </div>
@@ -93,11 +100,16 @@ export default function LaptopSection() {
   }
 
   return (
-    <section ref={sectionRef} id="workstation" aria-label="Workstation" className="relative h-[340vh] bg-black">
+    <section ref={sectionRef} id="workstation" aria-labelledby="workstation-title" className="relative h-[340vh] bg-black">
       <div className="sticky top-0 h-screen w-full overflow-hidden">
         <div className="pointer-events-none absolute left-1/2 top-1/2 h-[42rem] w-[42rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-sky-500/10 blur-[140px]" />
         <div className="pointer-events-none absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-black to-transparent" />
         <div className="pointer-events-none absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-black to-transparent" />
+        <div className="bg-grid fade-radial pointer-events-none absolute inset-0 opacity-40" />
+
+        <div ref={introRef} className="pointer-events-none absolute inset-x-0 top-24 z-10 px-5 sm:top-28">
+          <WorkstationIntro />
+        </div>
 
         <div className="absolute inset-0">
           {isNear ? <LaptopScene progressRef={progressRef} overlayRef={overlayRef} /> : null}
@@ -134,5 +146,24 @@ export default function LaptopSection() {
         </div>
       </div>
     </section>
+  );
+}
+
+/** Section heading shown above the laptop before it zooms in. */
+function WorkstationIntro({ className = "" }: { className?: string }) {
+  return (
+    <div className={`text-center ${className}`}>
+      <p className="eyebrow inline-flex items-center gap-3 text-indigo-300">
+        <span aria-hidden className="h-px w-8 bg-current opacity-60" />
+        Interactive
+        <span aria-hidden className="h-px w-8 bg-current opacity-60" />
+      </p>
+      <h2 id="workstation-title" className="heading-section mt-4 text-white">
+        Step inside my <span className="pr-[0.06em] font-serif font-normal italic tracking-normal text-indigo-300">workstation</span>
+      </h2>
+      <p className="mx-auto mt-4 max-w-md text-[0.9375rem] leading-relaxed text-white/60">
+        Scroll to power it on — then click the screen and type <span className="font-mono text-emerald-300">help</span>.
+      </p>
+    </div>
   );
 }

@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono, Instrument_Serif } from "next/font/google";
 import CursorEffect from "@/components/site/CursorEffect";
 import { profile } from "@/data/portfolio";
 import "./globals.css";
@@ -13,6 +13,15 @@ const geistSans = Geist({
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
+  display: "swap",
+});
+
+// Editorial italic used for single accent words in section titles.
+const instrumentSerif = Instrument_Serif({
+  variable: "--font-instrument-serif",
+  subsets: ["latin"],
+  weight: "400",
+  style: ["normal", "italic"],
   display: "swap",
 });
 
@@ -72,7 +81,7 @@ const personJsonLd = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en" className={`dark ${geistSans.variable} ${geistMono.variable} h-full scroll-smooth antialiased`}>
+    <html lang="en" className={`dark ${geistSans.variable} ${geistMono.variable} ${instrumentSerif.variable} h-full scroll-smooth antialiased`}>
       <body className="flex min-h-full flex-col overflow-x-clip bg-black text-white">
         <a
           href="#main"
@@ -87,6 +96,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         />
         <CursorEffect />
         {children}
+        <div aria-hidden className="grain" />
       </body>
     </html>
   );

@@ -283,9 +283,15 @@ export default function Galaxy({
     });
 
     const mesh = new Mesh(gl, { geometry, program });
-    let animateId: number;
+    let animateId = 0;
+    // Only render while the canvas is on screen and the tab is visible — the shader is full-screen.
+    let onScreen = true;
 
     function update(t: number) {
+      if (!onScreen || document.hidden) {
+        animateId = 0;
+        return;
+      }
       animateId = requestAnimationFrame(update);
       if (!freeze) {
         program.uniforms.uTime.value = t * 0.001;
@@ -307,6 +313,16 @@ export default function Galaxy({
     animateId = requestAnimationFrame(update);
     ctn.appendChild(gl.canvas);
 
+    const resume = () => {
+      if (!animateId && onScreen && !document.hidden) animateId = requestAnimationFrame(update);
+    };
+    const visibilityObserver = new IntersectionObserver(([entry]) => {
+      onScreen = entry.isIntersecting;
+      resume();
+    });
+    visibilityObserver.observe(ctn);
+    document.addEventListener('visibilitychange', resume);
+
     function handleMouseMove(e: MouseEvent) {
       const rect = ctn.getBoundingClientRect();
       const x = (e.clientX - rect.left) / rect.width;
@@ -326,6 +342,8 @@ export default function Galaxy({
 
     return () => {
       cancelAnimationFrame(animateId);
+      visibilityObserver.disconnect();
+      document.removeEventListener('visibilitychange', resume);
       window.removeEventListener('resize', resize);
       if (mouseInteraction) {
         ctn.removeEventListener('mousemove', handleMouseMove);

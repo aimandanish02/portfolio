@@ -19,6 +19,8 @@ export type BubbleMenuProps = {
   logo: ReactNode | string;
   logoHref?: string;
   logoAriaLabel?: string;
+  /** Extra pills rendered beside the menu toggle (e.g. a call to action). */
+  actions?: ReactNode;
   onMenuClick?: (open: boolean) => void;
   className?: string;
   style?: CSSProperties;
@@ -74,6 +76,7 @@ export default function BubbleMenu({
   logo,
   logoHref = '#',
   logoAriaLabel = 'Back to top',
+  actions,
   onMenuClick,
   className,
   style,
@@ -304,47 +307,50 @@ export default function BubbleMenu({
           </span>
         </a>
 
-        <button
-          type="button"
-          className={[
-            'bubble toggle-bubble menu-btn',
-            isMenuOpen ? 'open' : '',
-            'inline-flex flex-col items-center justify-center',
-            'rounded-full',
-            'bg-white',
-            'border border-white/10',
-            'shadow-[0_4px_16px_rgba(0,0,0,0.35)]',
-            'pointer-events-auto',
-            'w-12 h-12 md:w-14 md:h-14',
-            'border-0 cursor-pointer p-0',
-            'will-change-transform'
-          ].join(' ')}
-          onClick={handleToggle}
-          aria-label={isMenuOpen ? 'Close menu' : menuAriaLabel}
-          aria-expanded={isMenuOpen}
-          aria-controls="site-menu"
-          style={{ background: menuBg }}
-        >
-          <span
-            className="menu-line block mx-auto rounded-[2px]"
-            style={{
-              width: 26,
-              height: 2,
-              background: menuContentColor,
-              transform: isMenuOpen ? 'translateY(4px) rotate(45deg)' : 'none'
-            }}
-          />
-          <span
-            className="menu-line short block mx-auto rounded-[2px]"
-            style={{
-              marginTop: '6px',
-              width: 26,
-              height: 2,
-              background: menuContentColor,
-              transform: isMenuOpen ? 'translateY(-4px) rotate(-45deg)' : 'none'
-            }}
-          />
-        </button>
+        <div className="flex items-center gap-3">
+          {actions}
+          <button
+            type="button"
+            className={[
+              'bubble toggle-bubble menu-btn',
+              isMenuOpen ? 'open' : '',
+              'inline-flex flex-col items-center justify-center',
+              'rounded-full',
+              'bg-white',
+              'border border-white/10',
+              'shadow-[0_4px_16px_rgba(0,0,0,0.35)]',
+              'pointer-events-auto',
+              'w-12 h-12 md:w-14 md:h-14',
+              'border-0 cursor-pointer p-0',
+              'will-change-transform'
+            ].join(' ')}
+            onClick={handleToggle}
+            aria-label={isMenuOpen ? 'Close menu' : menuAriaLabel}
+            aria-expanded={isMenuOpen}
+            aria-controls="site-menu"
+            style={{ background: menuBg }}
+          >
+            <span
+              className="menu-line block mx-auto rounded-[2px]"
+              style={{
+                width: 26,
+                height: 2,
+                background: menuContentColor,
+                transform: isMenuOpen ? 'translateY(4px) rotate(45deg)' : 'none'
+              }}
+            />
+            <span
+              className="menu-line short block mx-auto rounded-[2px]"
+              style={{
+                marginTop: '6px',
+                width: 26,
+                height: 2,
+                background: menuContentColor,
+                transform: isMenuOpen ? 'translateY(-4px) rotate(-45deg)' : 'none'
+              }}
+            />
+          </button>
+        </div>
       </nav>
 
       {showOverlay && (

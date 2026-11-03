@@ -18,6 +18,9 @@ interface ScrollFloatProps {
   scrollStart?: string;
   scrollEnd?: string;
   stagger?: number;
+  /** Space-separated words to style differently (e.g. an italic serif accent). */
+  highlight?: string;
+  highlightClassName?: string;
 }
 
 const ScrollFloat: React.FC<ScrollFloatProps> = ({
@@ -31,17 +34,23 @@ const ScrollFloat: React.FC<ScrollFloatProps> = ({
   ease = 'back.inOut(2)',
   scrollStart = 'center bottom+=50%',
   scrollEnd = 'bottom bottom-=40%',
-  stagger = 0.03
+  stagger = 0.03,
+  highlight,
+  highlightClassName = ''
 }) => {
   const containerRef = useRef<HTMLElement>(null);
 
   // Characters animate individually but are grouped per word so lines only wrap between words.
   // The spans are presentational; the full string is exposed once via aria-label.
-  const splitText = useMemo(
-    () =>
-      children.split(' ').map((word, wi, words) => (
+  const splitText = useMemo(() => {
+    const accents = new Set((highlight ?? '').toLowerCase().split(/\s+/).filter(Boolean));
+    const bare = (word: string) => word.toLowerCase().replace(/[^\p{L}\p{N}']/gu, '');
+    return children.split(' ').map((word, wi, words) => (
         <React.Fragment key={wi}>
-          <span className="inline-block whitespace-nowrap" aria-hidden="true">
+          <span
+            className={`inline-block whitespace-nowrap ${accents.has(bare(word)) ? highlightClassName : ''}`}
+            aria-hidden="true"
+          >
             {word.split('').map((char, ci) => (
               <span className="inline-block" data-char key={ci}>
                 {char}
@@ -50,9 +59,8 @@ const ScrollFloat: React.FC<ScrollFloatProps> = ({
           </span>
           {wi < words.length - 1 ? ' ' : null}
         </React.Fragment>
-      )),
-    [children]
-  );
+      ));
+  }, [children, highlight, highlightClassName]);
 
   useEffect(() => {
     const el = containerRef.current;

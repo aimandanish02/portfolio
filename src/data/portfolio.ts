@@ -1,4 +1,5 @@
 import { Cloud, Code2, Server, Users, type LucideIcon } from "lucide-react";
+import type { BrandSlug } from "./brandIcons";
 
 /**
  * Single source of truth for the portfolio's content. Sections read from here
@@ -20,7 +21,19 @@ export const profile = {
   github: "https://github.com/aimandanish02",
   githubHandle: "aimandanish02",
   available: true,
+  /** Used by the globe marker, the hero HUD and the live clock. */
+  coordinates: { lat: 2.7258, lng: 101.9424, label: "2.7258° N, 101.9424° E" },
+  timeZone: "Asia/Kuala_Lumpur",
+  timeZoneLabel: "GMT+8",
 } as const;
+
+/** Phrases cycled in the hero tagline: "I build ___". */
+export const heroRotatingWords = [
+  "scalable web platforms",
+  "API-first products",
+  "AI-driven tools",
+  "pixel-perfect interfaces",
+];
 
 export const accents = {
   sky: "#38bdf8",
@@ -51,34 +64,116 @@ export const progressSections = [
   { id: "contact", label: "Contact", color: accents.emerald },
 ];
 
-export type Tech = { name: string; slug: string; color?: string };
+/** A Simple Icons slug, or "aws" (Simple Icons dropped the AWS mark, so it gets a neutral cloud glyph). */
+export type IconSlug = BrandSlug | "aws";
+
+export type Tech = { name: string; icon: IconSlug };
 
 export const techStack: Tech[] = [
-  { name: "React.js", slug: "react" },
-  { name: "Next.js", slug: "nextdotjs", color: "ffffff" },
-  { name: "TypeScript", slug: "typescript" },
-  { name: "JavaScript", slug: "javascript" },
-  { name: "Laravel", slug: "laravel" },
-  { name: "Express.js", slug: "express", color: "ffffff" },
-  { name: "Node.js", slug: "nodedotjs" },
-  { name: "PHP", slug: "php" },
-  { name: "Tailwind CSS", slug: "tailwindcss" },
-  { name: "MySQL", slug: "mysql" },
-  { name: "PostgreSQL", slug: "postgresql" },
-  { name: "Firebase", slug: "firebase" },
-  { name: "Supabase", slug: "supabase" },
-  { name: "AWS", slug: "amazonaws", color: "ff9900" },
-  { name: "DigitalOcean", slug: "digitalocean" },
-  { name: "WordPress", slug: "wordpress" },
-  { name: "Strapi", slug: "strapi" },
-  { name: "React Native", slug: "react" },
+  { name: "React.js", icon: "react" },
+  { name: "Next.js", icon: "nextdotjs" },
+  { name: "TypeScript", icon: "typescript" },
+  { name: "JavaScript", icon: "javascript" },
+  { name: "Laravel", icon: "laravel" },
+  { name: "Express.js", icon: "express" },
+  { name: "Node.js", icon: "nodedotjs" },
+  { name: "PHP", icon: "php" },
+  { name: "Tailwind CSS", icon: "tailwindcss" },
+  { name: "MySQL", icon: "mysql" },
+  { name: "PostgreSQL", icon: "postgresql" },
+  { name: "Firebase", icon: "firebase" },
+  { name: "Supabase", icon: "supabase" },
+  { name: "AWS", icon: "aws" },
+  { name: "DigitalOcean", icon: "digitalocean" },
+  { name: "WordPress", icon: "wordpress" },
+  { name: "Strapi", icon: "strapi" },
+  { name: "React Native", icon: "react" },
 ];
 
-export const skillGroups = [
-  { label: "Frontend", items: ["React.js", "Next.js", "TypeScript", "Tailwind CSS", "React Native"] },
-  { label: "Backend", items: ["Laravel", "Express.js", "Node.js", "PHP", "REST / OpenAPI"] },
-  { label: "Data", items: ["MySQL", "PostgreSQL", "Firebase", "Supabase", "Strapi"] },
-  { label: "Cloud & Ops", items: ["DigitalOcean", "AWS", "Laravel Forge", "WordPress"] },
+export type SkillGroup = { label: string; blurb: string; items: Tech[] };
+
+export const skillGroups: SkillGroup[] = [
+  {
+    label: "Frontend",
+    blurb: "Interfaces that feel fast",
+    items: [
+      { name: "React.js", icon: "react" },
+      { name: "Next.js", icon: "nextdotjs" },
+      { name: "TypeScript", icon: "typescript" },
+      { name: "Tailwind CSS", icon: "tailwindcss" },
+      { name: "React Native", icon: "react" },
+    ],
+  },
+  {
+    label: "Backend",
+    blurb: "APIs that stay documented",
+    items: [
+      { name: "Laravel", icon: "laravel" },
+      { name: "Express.js", icon: "express" },
+      { name: "Node.js", icon: "nodedotjs" },
+      { name: "PHP", icon: "php" },
+      { name: "REST / OpenAPI", icon: "openapiinitiative" },
+    ],
+  },
+  {
+    label: "Data",
+    blurb: "Storage that scales",
+    items: [
+      { name: "MySQL", icon: "mysql" },
+      { name: "PostgreSQL", icon: "postgresql" },
+      { name: "Firebase", icon: "firebase" },
+      { name: "Supabase", icon: "supabase" },
+      { name: "Strapi", icon: "strapi" },
+    ],
+  },
+  {
+    label: "Cloud & Ops",
+    blurb: "Deploys that don't page anyone",
+    items: [
+      { name: "DigitalOcean", icon: "digitalocean" },
+      { name: "AWS", icon: "aws" },
+      { name: "Laravel Forge", icon: "laravel" },
+      { name: "WordPress", icon: "wordpress" },
+    ],
+  },
+];
+
+/** Rings of the skills orbit, innermost first. */
+export const orbitRings: { icons: Tech[]; duration: number; reverse?: boolean }[] = [
+  {
+    duration: 28,
+    icons: [
+      { name: "React", icon: "react" },
+      { name: "Next.js", icon: "nextdotjs" },
+      { name: "TypeScript", icon: "typescript" },
+      { name: "Tailwind CSS", icon: "tailwindcss" },
+    ],
+  },
+  {
+    duration: 42,
+    reverse: true,
+    icons: [
+      { name: "Laravel", icon: "laravel" },
+      { name: "Node.js", icon: "nodedotjs" },
+      { name: "Express", icon: "express" },
+      { name: "PHP", icon: "php" },
+      { name: "JavaScript", icon: "javascript" },
+      { name: "OpenAPI", icon: "openapiinitiative" },
+    ],
+  },
+  {
+    duration: 60,
+    icons: [
+      { name: "MySQL", icon: "mysql" },
+      { name: "PostgreSQL", icon: "postgresql" },
+      { name: "Firebase", icon: "firebase" },
+      { name: "Supabase", icon: "supabase" },
+      { name: "DigitalOcean", icon: "digitalocean" },
+      { name: "AWS", icon: "aws" },
+      { name: "WordPress", icon: "wordpress" },
+      { name: "Strapi", icon: "strapi" },
+    ],
+  },
 ];
 
 export type Job = {
@@ -86,6 +181,8 @@ export type Job = {
   title: string;
   company: string;
   location: string;
+  /** Two-letter badge shown in the timeline. */
+  monogram: string;
   current?: boolean;
   stack: string[];
   bullets: string[];
@@ -97,6 +194,7 @@ export const experience: Job[] = [
     title: "Software Engineer",
     company: "Revenue Monster",
     location: "Malaysia",
+    monogram: "RM",
     current: true,
     stack: ["OpenAPI", "Redoc", "REST"],
     bullets: ["Developed and maintained API documentation."],
@@ -106,6 +204,7 @@ export const experience: Job[] = [
     title: "Junior Lead Web Developer",
     company: "iPen Sdn. Bhd.",
     location: "Seri Kembangan, Selangor",
+    monogram: "iP",
     stack: ["React.js", "Next.js", "Laravel", "Express.js", "DigitalOcean"],
     bullets: [
       "Developed and maintained full-stack applications using React.js, Next.js, Laravel, Express.js, WordPress and RESTful APIs to deliver scalable solutions.",
@@ -118,6 +217,7 @@ export const experience: Job[] = [
     title: "Degree Intern — Web Developer",
     company: "iPen Sdn. Bhd.",
     location: "Seri Kembangan, Selangor",
+    monogram: "iP",
     stack: ["React.js", "Laravel", "Strapi", "Tailwind CSS"],
     bullets: [
       "Built web applications with React.js and Laravel, gaining hands-on experience in full-stack development.",
@@ -130,6 +230,7 @@ export const experience: Job[] = [
     title: "Diploma Intern — Management Information System",
     company: "Kaneka Malaysia Sdn. Bhd.",
     location: "Kuantan, Pahang",
+    monogram: "KM",
     stack: ["IT Systems", "R&D"],
     bullets: [
       "Fulfilled tasks assigned by supervisors, including research and development of IT-focused solutions.",
@@ -139,9 +240,14 @@ export const experience: Job[] = [
   },
 ];
 
+export type ProjectIcon = "sprout" | "users" | "layout" | "globe" | "leaf" | "shopping" | "shield" | "boxes";
+
 export type Project = {
   title: string;
   description: string;
+  /** Short label shown on the generated cover. */
+  category: string;
+  icon: ProjectIcon;
   stack: string[];
   status?: string;
   featured?: boolean;
@@ -152,17 +258,19 @@ export const projects: Project[] = [
     title: "FagroX App",
     description:
       "AI-driven agriculture platform integrating weather forecasts, crop analytics, and market access tools — helping farmers plan, grow, and sell from one dashboard.",
+    category: "AgriTech platform",
+    icon: "sprout",
     stack: ["Next.js", "AI", "REST"],
     status: "Ongoing",
     featured: true,
   },
-  { title: "iPen HR System", description: "Full-stack HR management system covering employee records, leave, and payroll workflows.", stack: ["Laravel", "React.js", "MySQL"] },
-  { title: "FagroX CMS", description: "Strapi-based CMS backend powering content for fagrox.com.", stack: ["Strapi", "Node.js"] },
-  { title: "FagroX", description: "Official landing site highlighting digital agriculture solutions and farmer onboarding.", stack: ["Next.js", "Tailwind CSS"] },
-  { title: "Phytob", description: "Responsive corporate website for a health and wellness brand.", stack: ["WordPress", "PHP"] },
-  { title: "Hekha", description: "Clothing brand storefront with a modern UI/UX pass end to end.", stack: ["Next.js", "Tailwind CSS"] },
-  { title: "E-Certificate Management System", description: "Blockchain-based certificate storage using Laravel and IPFS for tamper-proof verification.", stack: ["Laravel", "IPFS", "Blockchain"] },
-  { title: "Hardware Inventory System", description: "Inventory tracking system for hardware assets with reporting and stock movement history.", stack: ["Laravel", "MySQL"] },
+  { title: "iPen HR System", category: "HR system", icon: "users", description: "Full-stack HR management system covering employee records, leave, and payroll workflows.", stack: ["Laravel", "React.js", "MySQL"] },
+  { title: "FagroX CMS", category: "Headless CMS", icon: "layout", description: "Strapi-based CMS backend powering content for fagrox.com.", stack: ["Strapi", "Node.js"] },
+  { title: "FagroX", category: "Landing site", icon: "globe", description: "Official landing site highlighting digital agriculture solutions and farmer onboarding.", stack: ["Next.js", "Tailwind CSS"] },
+  { title: "Phytob", category: "Corporate site", icon: "leaf", description: "Responsive corporate website for a health and wellness brand.", stack: ["WordPress", "PHP"] },
+  { title: "Hekha", category: "E-commerce", icon: "shopping", description: "Clothing brand storefront with a modern UI/UX pass end to end.", stack: ["Next.js", "Tailwind CSS"] },
+  { title: "E-Certificate Management System", category: "Blockchain", icon: "shield", description: "Blockchain-based certificate storage using Laravel and IPFS for tamper-proof verification.", stack: ["Laravel", "IPFS", "Blockchain"] },
+  { title: "Hardware Inventory System", category: "Internal tool", icon: "boxes", description: "Inventory tracking system for hardware assets with reporting and stock movement history.", stack: ["Laravel", "MySQL"] },
 ];
 
 export const stats = [
@@ -176,6 +284,16 @@ export const velocityTexts = [
   "FULL-STACK ENGINEER · REACT · NEXT.JS · LARAVEL ·",
   "API DESIGN · CLOUD DEPLOYMENT · UI ENGINEERING ·",
 ];
+
+export const education = {
+  degree: "BCS (Hons.) Netcentric Computing",
+  school: "Universiti Teknologi MARA",
+  cgpa: "3.44",
+  honors: "2× Dean's List",
+};
+
+/** Topics shown as chips on the About intro card. */
+export const focusAreas = ["Full-stack web", "AI-driven platforms", "API design", "Code review & mentoring"];
 
 export const facts = [
   { label: "Current", value: "Software Engineer · Revenue Monster" },
