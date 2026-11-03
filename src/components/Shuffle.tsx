@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useRef, useEffect, useState, useMemo } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -69,10 +71,15 @@ const Shuffle: React.FC<ShuffleProps> = ({
   const hoverHandlerRef = useRef<((e: Event) => void) | null>(null);
 
   useEffect(() => {
-    if ('fonts' in document) {
-      if (document.fonts.status === 'loaded') setFontsLoaded(true);
-      else document.fonts.ready.then(() => setFontsLoaded(true));
-    } else setFontsLoaded(true);
+    let cancelled = false;
+    // Resolves immediately when fonts are already loaded; always async so we never set state synchronously in the effect.
+    const ready = 'fonts' in document ? document.fonts.ready : Promise.resolve();
+    ready.then(() => {
+      if (!cancelled) setFontsLoaded(true);
+    });
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   const scrollTriggerStart = useMemo(() => {
@@ -88,6 +95,9 @@ const Shuffle: React.FC<ShuffleProps> = ({
     () => {
       if (!ref.current || !text || !fontsLoaded) return;
       if (respectReducedMotion && window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        // Without this the text would stay `invisible` forever for reduced-motion users.
+        ref.current.classList.remove('invisible');
+        ref.current.classList.add('visible');
         onShuffleComplete?.();
         return;
       }
@@ -225,7 +235,7 @@ const Shuffle: React.FC<ShuffleProps> = ({
             inner.setAttribute('data-final-y', String(finalY));
           }
 
-          if (colorFrom) (inner.style as any).color = colorFrom;
+          if (colorFrom) inner.style.color = colorFrom;
           wrappersRef.current.push(wrap);
         });
       };
@@ -288,7 +298,7 @@ const Shuffle: React.FC<ShuffleProps> = ({
         });
 
         const addTween = (targets: HTMLElement[], at: number) => {
-          const vars: any = {
+          const vars: gsap.TweenVars = {
             duration,
             ease,
             force3D: true,
@@ -315,7 +325,7 @@ const Shuffle: React.FC<ShuffleProps> = ({
         } else {
           strips.forEach(strip => {
             const d = Math.random() * maxDelay;
-            const vars: any = {
+            const vars: gsap.TweenVars = {
               duration,
               ease,
               force3D: true
@@ -417,7 +427,8 @@ const Shuffle: React.FC<ShuffleProps> = ({
   );
   const Tag = (tag || 'p') as keyof JSX.IntrinsicElements;
 
-  return React.createElement(Tag, { ref: ref as any, className: classes, style: commonStyle }, text);
+  // SplitText chops the text into per-character spans; aria-label keeps it readable as one word for screen readers.
+  return React.createElement(Tag, { ref, className: classes, style: commonStyle, 'aria-label': text }, text);
 };
 
 export default Shuffle;

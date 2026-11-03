@@ -1,3 +1,5 @@
+"use client";
+
 import { Renderer, Program, Mesh, Color, Triangle } from 'ogl';
 import { useEffect, useRef } from 'react';
 
@@ -216,6 +218,8 @@ export default function Galaxy({
   useEffect(() => {
     if (!ctnDom.current) return;
     const ctn = ctnDom.current;
+    // Freeze the starfield drift for users who prefer reduced motion.
+    const freeze = disableAnimation || window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const renderer = new Renderer({
       alpha: transparent,
       premultipliedAlpha: false
@@ -230,6 +234,8 @@ export default function Galaxy({
       gl.clearColor(0, 0, 0, 1);
     }
 
+    // Assigned once below; declared early because resize() closes over it.
+    // eslint-disable-next-line prefer-const
     let program: Program;
 
     function resize() {
@@ -281,7 +287,7 @@ export default function Galaxy({
 
     function update(t: number) {
       animateId = requestAnimationFrame(update);
-      if (!disableAnimation) {
+      if (!freeze) {
         program.uniforms.uTime.value = t * 0.001;
         program.uniforms.uStarSpeed.value = (t * 0.001 * starSpeed) / 10.0;
       }

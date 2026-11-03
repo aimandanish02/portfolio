@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 export type LogoItem =
@@ -17,6 +19,20 @@ export type LogoItem =
       width?: number;
       height?: number;
     };
+
+/** Flattened view of either LogoItem variant, so render code can read optional fields without `any`. */
+type AnyLogo = {
+  node?: React.ReactNode;
+  src?: string;
+  alt?: string;
+  href?: string;
+  title?: string;
+  ariaLabel?: string;
+  srcSet?: string;
+  sizes?: string;
+  width?: number;
+  height?: number;
+};
 
 export interface LogoLoopProps {
   logos: LogoItem[];
@@ -72,6 +88,7 @@ const useResizeObserver = (
     return () => {
       observers.forEach(observer => observer?.disconnect());
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- caller supplies the dependency list
   }, dependencies);
 };
 
@@ -112,6 +129,7 @@ const useImageLoader = (
         img.removeEventListener('error', handleImageLoad);
       });
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- caller supplies the dependency list
   }, dependencies);
 };
 
@@ -191,7 +209,7 @@ const useAnimationLoop = (
       }
       lastTimestampRef.current = null;
     };
-  }, [targetVelocity, seqWidth, seqHeight, isHovered, hoverSpeed, isVertical]);
+  }, [trackRef, targetVelocity, seqWidth, seqHeight, isHovered, hoverSpeed, isVertical]);
 };
 
 export const LogoLoop = React.memo<LogoLoopProps>(
@@ -324,6 +342,7 @@ export const LogoLoop = React.memo<LogoLoopProps>(
         }
 
         const isNodeItem = 'node' in item;
+        const it = item as AnyLogo;
 
         const content = isNodeItem ? (
           <span
@@ -333,11 +352,12 @@ export const LogoLoop = React.memo<LogoLoopProps>(
               scaleOnHover &&
                 'transition-transform duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] group-hover/item:scale-120'
             )}
-            aria-hidden={!!(item as any).href && !(item as any).ariaLabel}
+            aria-hidden={!!it.href && !it.ariaLabel}
           >
-            {(item as any).node}
+            {it.node}
           </span>
         ) : (
+          // eslint-disable-next-line @next/next/no-img-element -- arbitrary remote logos; next/image would need per-host config
           <img
             className={cx(
               'h-[var(--logoloop-logoHeight)] w-auto block object-contain',
@@ -347,13 +367,13 @@ export const LogoLoop = React.memo<LogoLoopProps>(
               scaleOnHover &&
                 'transition-transform duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] group-hover/item:scale-120'
             )}
-            src={(item as any).src}
-            srcSet={(item as any).srcSet}
-            sizes={(item as any).sizes}
-            width={(item as any).width}
-            height={(item as any).height}
-            alt={(item as any).alt ?? ''}
-            title={(item as any).title}
+            src={it.src}
+            srcSet={it.srcSet}
+            sizes={it.sizes}
+            width={it.width}
+            height={it.height}
+            alt={it.alt ?? ''}
+            title={it.title}
             loading="lazy"
             decoding="async"
             draggable={false}
@@ -361,10 +381,10 @@ export const LogoLoop = React.memo<LogoLoopProps>(
         );
 
         const itemAriaLabel = isNodeItem
-          ? ((item as any).ariaLabel ?? (item as any).title)
-          : ((item as any).alt ?? (item as any).title);
+          ? (it.ariaLabel ?? it.title)
+          : (it.alt ?? it.title);
 
-        const inner = (item as any).href ? (
+        const inner = it.href ? (
           <a
             className={cx(
               'inline-flex items-center no-underline rounded',
@@ -372,7 +392,7 @@ export const LogoLoop = React.memo<LogoLoopProps>(
               'hover:opacity-80',
               'focus-visible:outline focus-visible:outline-current focus-visible:outline-offset-2'
             )}
-            href={(item as any).href}
+            href={it.href}
             aria-label={itemAriaLabel || 'logo link'}
             target="_blank"
             rel="noreferrer noopener"

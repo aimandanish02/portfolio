@@ -1,11 +1,15 @@
+"use client";
+
 import React, { useRef, useEffect } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 gsap.registerPlugin(ScrollTrigger);
 
-interface AnimatedContentProps extends React.HTMLAttributes<HTMLDivElement> {
+interface AnimatedContentProps extends React.HTMLAttributes<HTMLElement> {
   children: React.ReactNode;
+  /** Rendered element — use `li` inside lists so markup stays valid. */
+  as?: 'div' | 'li' | 'section' | 'article';
   container?: Element | string | null;
   distance?: number;
   direction?: 'vertical' | 'horizontal';
@@ -26,6 +30,7 @@ interface AnimatedContentProps extends React.HTMLAttributes<HTMLDivElement> {
 
 const AnimatedContent: React.FC<AnimatedContentProps> = ({
   children,
+  as = 'div',
   container,
   distance = 100,
   direction = 'vertical',
@@ -45,11 +50,17 @@ const AnimatedContent: React.FC<AnimatedContentProps> = ({
   className = '',
   ...props
 }) => {
-  const ref = useRef<HTMLDivElement>(null);
+  const ref = useRef<HTMLElement>(null);
 
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
+
+    // Reduced motion: show content in place, no entrance animation.
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      gsap.set(el, { visibility: 'visible', opacity: 1 });
+      return;
+    }
 
     let scrollerTarget: Element | string | null = container || document.getElementById('snap-main-container') || null;
 
@@ -126,10 +137,12 @@ const AnimatedContent: React.FC<AnimatedContentProps> = ({
     onDisappearanceComplete
   ]);
 
+  // One concrete tag type keeps the ref typing simple; all options are plain HTMLElements.
+  const Tag = as as 'div';
   return (
-    <div ref={ref} className={`invisible ${className}`} {...props}>
+    <Tag ref={ref as React.RefObject<HTMLDivElement>} className={`invisible ${className}`} {...props}>
       {children}
-    </div>
+    </Tag>
   );
 };
 
