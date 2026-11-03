@@ -10,6 +10,7 @@
   --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-geist-mono);
   --font-heading: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-serif: var(--font-instrument-serif), ui-serif, Georgia, serif;
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -210,6 +211,140 @@
 }
 .no-scrollbar::-webkit-scrollbar {
   display: none;
+}
+
+/* ------------------------------------------------------------------ */
+/* Motion + decoration layer                                           */
+/* ------------------------------------------------------------------ */
+
+@theme {
+  --animate-aurora: aurora 18s ease-in-out infinite alternate;
+  --animate-orbit: orbit 40s linear infinite;
+  --animate-shimmer: shimmer 6s linear infinite;
+  --animate-scroll-dot: scroll-dot 1.8s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+  --animate-float: float 6s ease-in-out infinite;
+  --animate-marquee-glow: marquee-glow 4s ease-in-out infinite;
+
+  @keyframes aurora {
+    0% { transform: translate3d(0, 0, 0) scale(1); }
+    50% { transform: translate3d(6%, -8%, 0) scale(1.12); }
+    100% { transform: translate3d(-6%, 6%, 0) scale(0.94); }
+  }
+  @keyframes orbit {
+    to { transform: rotate(360deg); }
+  }
+  @keyframes shimmer {
+    from { background-position: 150% 0; }
+    to { background-position: -150% 0; }
+  }
+  @keyframes scroll-dot {
+    0% { transform: translateY(0); opacity: 0; }
+    20% { opacity: 1; }
+    80% { transform: translateY(12px); opacity: 0; }
+    100% { transform: translateY(12px); opacity: 0; }
+  }
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+  }
+  @keyframes marquee-glow {
+    0%, 100% { opacity: 0.55; }
+    50% { opacity: 1; }
+  }
+}
+
+/* Hairline section divider that fades out at both ends. */
+@utility divider-top {
+  &::before {
+    content: "";
+    position: absolute;
+    inset-inline: 0;
+    top: 0;
+    height: 1px;
+    pointer-events: none;
+    background: linear-gradient(90deg, transparent, rgb(255 255 255 / 0.14) 25%, rgb(255 255 255 / 0.14) 75%, transparent);
+  }
+}
+
+/* Decorative backgrounds — pair with a fade mask so they dissolve at the edges. */
+@utility bg-dots {
+  background-image: radial-gradient(rgb(255 255 255 / 0.1) 1px, transparent 1.5px);
+  background-size: 22px 22px;
+}
+@utility bg-grid {
+  background-image:
+    linear-gradient(rgb(255 255 255 / 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(255 255 255 / 0.05) 1px, transparent 1px);
+  background-size: 44px 44px;
+}
+@utility fade-radial {
+  mask-image: radial-gradient(ellipse at center, #000 15%, transparent 70%);
+}
+@utility fade-bottom {
+  mask-image: linear-gradient(#000 40%, transparent);
+}
+
+/* Hollow display type. */
+@utility text-outline {
+  color: transparent;
+  -webkit-text-stroke: 1px rgb(255 255 255 / 0.2);
+}
+
+/* Moving highlight across gradient text. Set --shimmer-base / --shimmer-glint to recolour. */
+@utility text-shimmer {
+  background-image: linear-gradient(
+    110deg,
+    var(--shimmer-base, #ffffff) 40%,
+    var(--shimmer-glint, #7dd3fc) 50%,
+    var(--shimmer-base, #ffffff) 60%
+  );
+  background-size: 250% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: var(--animate-shimmer);
+}
+
+/* A light that travels around the element's border. Needs a positioned element with a border radius. */
+@property --beam-angle {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+@keyframes beam-spin {
+  to { --beam-angle: 360deg; }
+}
+@utility border-beam {
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    padding: 1px;
+    border-radius: inherit;
+    pointer-events: none;
+    background: conic-gradient(
+      from var(--beam-angle),
+      transparent 0deg,
+      transparent 250deg,
+      var(--beam-color, #facc15) 310deg,
+      transparent 350deg
+    );
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    animation: beam-spin 6s linear infinite;
+  }
+}
+
+/* Static film grain over the whole page — adds texture to flat blacks. */
+.grain {
+  pointer-events: none;
+  position: fixed;
+  inset: 0;
+  z-index: 45;
+  opacity: 0.05;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 1 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
 /* Respect the OS setting: kill smooth scroll and long transitions. */

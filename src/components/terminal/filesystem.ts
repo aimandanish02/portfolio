@@ -48,7 +48,7 @@ linkedin  ${profile.linkedin}
 github    ${profile.github}
 location  ${profile.location}, ${profile.country}`;
 
-const skills = JSON.stringify(Object.fromEntries(skillGroups.map((g) => [g.label.toLowerCase(), g.items])), null, 2);
+const skills = JSON.stringify(Object.fromEntries(skillGroups.map((g) => [g.label.toLowerCase(), g.items.map((i) => i.name)])), null, 2);
 
 const projectFiles = Object.fromEntries(
   projects.map((p) => [

@@ -119,10 +119,10 @@ function Laptop({ progressRef, overlayRef }: LaptopProps) {
         </group>
       </group>
 
-      {/* Dark plate over the model's flat screen face; the DOM overlay sits on top. */}
+      {/* Standby-blue plate over the model's flat screen face; the DOM terminal overlay sits on top. */}
       <mesh ref={screen} position={[0, 0, 0.0015]} rotation={[SCREEN.tiltX, 0, 0]}>
         <planeGeometry args={[SCREEN.width, SCREEN.height]} />
-        <meshBasicMaterial color="#05060f" toneMapped={false} />
+        <meshBasicMaterial color="#0b1430" toneMapped={false} />
       </mesh>
     </group>
   );
