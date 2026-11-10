@@ -1,4 +1,4 @@
-import { ArrowRight, ArrowUp, ArrowUpRight, Clock, GraduationCap, Mail, MapPin, Phone, Sparkles } from "lucide-react";
+import { ArrowRight, ArrowUp, ArrowUpRight, GraduationCap, Mail, MapPin, Phone, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Galaxy from "@/components/Galaxy";
 import Shuffle from "@/components/Shuffle";
@@ -21,7 +21,6 @@ import ProjectCover from "@/components/site/ProjectCover";
 import { BrandIcon, BrandSprite } from "@/components/site/BrandIcon";
 import { GitHubIcon, LinkedInIcon } from "@/components/site/BrandIcons";
 import Globe from "@/components/fx/Globe";
-import LocalTime from "@/components/fx/LocalTime";
 import Magnet from "@/components/fx/Magnet";
 import RotatingText from "@/components/fx/RotatingText";
 import TiltCard from "@/components/fx/TiltCard";
@@ -102,9 +101,8 @@ export default function Home() {
         actions={
           <a
             href="#contact"
-            className="pointer-events-auto hidden h-12 items-center gap-2.5 rounded-full border border-white/10 bg-[#1a1c2e] px-5 text-sm font-medium text-white shadow-[0_4px_16px_rgba(0,0,0,0.35)] transition hover:border-emerald-400/40 hover:bg-[#20233a] md:inline-flex md:h-14 md:px-6"
+            className="pointer-events-auto hidden h-12 items-center rounded-full border border-white/10 bg-[#1a1c2e] px-5 text-sm font-medium text-white shadow-[0_4px_16px_rgba(0,0,0,0.35)] transition hover:border-white/25 hover:bg-[#20233a] md:inline-flex md:h-14 md:px-6"
           >
-            <LiveDot />
             Let&apos;s talk
           </a>
         }
@@ -232,17 +230,6 @@ export default function Home() {
             </dl>
           </div>
 
-          {/* HUD corners */}
-          <div className="pointer-events-none absolute bottom-8 left-8 z-10 hidden font-mono text-xs uppercase tracking-wider text-white/45 md:block">
-            <p className="text-white/70">Seremban, MY</p>
-            <p className="mt-1">{profile.coordinates.label}</p>
-          </div>
-          <div className="pointer-events-none absolute bottom-8 right-8 z-10 hidden text-right font-mono text-xs uppercase tracking-wider text-white/45 md:block">
-            <p className="text-white/70">
-              <LocalTime timeZone={profile.timeZone} seconds /> MYT
-            </p>
-            <p className="mt-1">Local time · {profile.timeZoneLabel}</p>
-          </div>
           <ScrollCue href="#workstation" />
         </section>
 
@@ -286,7 +273,7 @@ export default function Home() {
               </SpotlightCard>
             </AnimatedContent>
 
-            {/* Location + globe */}
+            {/* Globe */}
             <AnimatedContent distance={32} duration={0.7} delay={0.08} threshold={0.1} className="sm:col-span-2">
               <SpotlightCard className={cn(bentoCard, "relative min-h-[19rem]")} spotlightColor="rgba(168, 85, 247, 0.14)">
                 <div className="relative z-10 flex h-full max-w-[58%] flex-col p-6 sm:p-8">
@@ -297,13 +284,6 @@ export default function Home() {
                   <h3 className="mt-3 text-xl font-semibold text-white sm:text-2xl">
                     {profile.location.split(",")[0]}, <span className="font-serif font-normal italic text-purple-300">{profile.country}</span>
                   </h3>
-                  <p className="mt-1.5 whitespace-nowrap font-mono text-xs text-white/50">{profile.coordinates.label}</p>
-                  <p className="mt-auto flex items-center gap-2 pt-8 text-sm text-white/65">
-                    <Clock className="size-4 text-purple-400" aria-hidden />
-                    <span>
-                      <LocalTime timeZone={profile.timeZone} className="font-medium text-white" /> local · {profile.timeZoneLabel}
-                    </span>
-                  </p>
                 </div>
                 <div className="absolute -bottom-24 -right-20 size-[19rem] sm:-bottom-32 sm:-right-14 sm:size-[24rem]">
                   <Globe lat={profile.coordinates.lat} lng={profile.coordinates.lng} />
@@ -424,7 +404,6 @@ export default function Home() {
 
               <AnimatedContent distance={40} duration={0.9} scale={0.9} threshold={0.1}>
                 <TechOrbit />
-                <p className="mt-6 hidden text-center font-mono text-xs uppercase tracking-wider text-white/40 [@media(hover:hover)]:block">Hover to pause the orbit</p>
               </AnimatedContent>
             </div>
           </div>
@@ -636,13 +615,6 @@ export default function Home() {
                 </Magnet>
                 <CopyEmailButton email={profile.email} />
               </div>
-              <p className="mt-8 inline-flex items-center gap-3 rounded-full border border-white/10 bg-white/[0.03] px-4 py-2 text-sm text-white/65 backdrop-blur-sm">
-                <LiveDot />
-                <span>
-                  It&apos;s <LocalTime timeZone={profile.timeZone} className="font-medium text-white" /> in {profile.location.split(",")[0]} ·{" "}
-                  {profile.timeZoneLabel}
-                </span>
-              </p>
             </div>
 
             <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-1">
