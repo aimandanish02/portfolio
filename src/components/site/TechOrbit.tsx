@@ -7,11 +7,11 @@ const RING_INSET = ["31%", "19%", "6%"];
 
 /**
  * The stack as a little solar system. Pure CSS: each ring spins, and every icon
- * counter-spins at the same rate so it stays upright. Hovering pauses everything.
+ * counter-spins at the same rate so it stays upright.
  */
 export default function TechOrbit() {
   return (
-    <div className="group/orbit relative mx-auto aspect-square w-full max-w-[30rem]" aria-hidden>
+    <div className="relative mx-auto aspect-square w-full max-w-[30rem]" aria-hidden>
       <div className="absolute inset-[22%] rounded-full bg-cyan-500/15 blur-3xl" />
       <div className="absolute inset-[38%] rounded-full bg-purple-500/20 blur-2xl" />
 
@@ -29,7 +29,7 @@ export default function TechOrbit() {
         return (
           <div
             key={ri}
-            className={`absolute animate-orbit rounded-full border group-hover/orbit:[animation-play-state:paused] ${
+            className={`absolute animate-orbit rounded-full border ${
               ri === 1 ? "border-dashed border-white/10" : "border-white/[0.07]"
             }`}
             style={ringStyle}
@@ -39,7 +39,7 @@ export default function TechOrbit() {
               return (
                 <div key={tech.name} className="absolute inset-0" style={{ rotate: `${angle}deg` }}>
                   <div className="absolute left-1/2 top-0 -translate-x-1/2 -translate-y-1/2" style={{ rotate: `${-angle}deg` }}>
-                    <div className="animate-orbit group-hover/orbit:[animation-play-state:paused]" style={counterStyle}>
+                    <div className="animate-orbit" style={counterStyle}>
                       <span
                         title={tech.name}
                         className="flex size-10 items-center justify-center rounded-full border border-white/10 bg-[#0b0c18]/90 shadow-[0_8px_24px_-8px_rgba(0,0,0,0.8)] backdrop-blur transition duration-300 hover:scale-125 hover:border-white/30 sm:size-12"

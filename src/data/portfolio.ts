@@ -21,10 +21,8 @@ export const profile = {
   github: "https://github.com/aimandanish02",
   githubHandle: "aimandanish02",
   available: true,
-  /** Used by the globe marker, the hero HUD and the live clock. */
-  coordinates: { lat: 2.7258, lng: 101.9424, label: "2.7258° N, 101.9424° E" },
-  timeZone: "Asia/Kuala_Lumpur",
-  timeZoneLabel: "GMT+8",
+  /** Where the globe marker sits. Never shown as text. */
+  coordinates: { lat: 2.7258, lng: 101.9424 },
 } as const;
 
 /** Phrases cycled in the hero tagline: "I build ___". */
